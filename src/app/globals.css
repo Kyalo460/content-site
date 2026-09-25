@@ -9,7 +9,7 @@
   }
 
   * {
-    @apply border-cream-200;
+    @apply border-border-primary;
   }
 
   html {
@@ -17,12 +17,16 @@
   }
 
   body {
-    @apply font-body text-charcoal-900 bg-cream-50 antialiased;
+    @apply font-body text-text-primary bg-background-primary antialiased;
     font-feature-settings: 'cv11', 'ss01';
   }
 
+  .dark body {
+    @apply bg-background-primary text-text-primary;
+  }
+
   ::selection {
-    @apply bg-rose-300 text-white;
+    @apply bg-pink-500/30 text-text-primary;
   }
 
   ::-webkit-scrollbar {
@@ -30,11 +34,15 @@
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-cream-100;
+    @apply bg-background-secondary;
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-rose-300 rounded-full hover:bg-rose-400;
+    @apply bg-deepblue-600 rounded-full hover:bg-deepblue-500;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-deepblue-500;
   }
 }
 
@@ -44,39 +52,39 @@
   }
 
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 font-medium transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 font-medium transition-all duration-300 ease-out-expo focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background-primary disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .btn-primary {
-    @apply btn bg-rose-600 text-white hover:bg-rose-700 focus:ring-rose-500 shadow-elegant;
+    @apply btn bg-deepblue-600 text-white hover:bg-deepblue-700 focus:ring-deepblue-500 shadow-elegant;
   }
 
   .btn-secondary {
-    @apply btn bg-charcoal-800 text-white hover:bg-charcoal-900 focus:ring-charcoal-500;
+    @apply btn bg-surface-800 text-text-primary hover:bg-surface-700 border border-border-secondary focus:ring-deepblue-500;
   }
 
-  .btn-gold {
-    @apply btn bg-gold-500 text-charcoal-900 hover:bg-gold-400 focus:ring-gold-500 shadow-gold;
+  .btn-pink {
+    @apply btn bg-pink-600 text-white hover:bg-pink-700 focus:ring-pink-500 shadow-pink;
   }
 
   .btn-outline {
-    @apply btn border-2 border-charcoal-800 text-charcoal-800 hover:bg-charcoal-800 hover:text-white focus:ring-charcoal-500;
+    @apply btn border-2 border-border-secondary text-text-primary hover:bg-surface-800 focus:ring-deepblue-500;
   }
 
   .btn-ghost {
-    @apply btn text-charcoal-600 hover:bg-cream-200 focus:ring-charcoal-500;
+    @apply btn text-text-secondary hover:bg-surface-800/50 focus:ring-deepblue-500;
   }
 
   .input {
-    @apply w-full rounded-xl border border-cream-300 bg-white px-4 py-3 text-charcoal-900 placeholder-charcoal-400 transition-all duration-200 focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 focus:outline-none;
+    @apply w-full rounded-xl border border-border-primary bg-surface-800/50 px-4 py-3 text-text-primary placeholder-text-muted transition-all duration-200 focus:border-deepblue-500 focus:ring-2 focus:ring-deepblue-500/20 focus:outline-none;
   }
 
   .label {
-    @apply block text-sm font-medium text-charcoal-700 mb-1.5;
+    @apply block text-sm font-medium text-text-secondary mb-1.5;
   }
 
   .card {
-    @apply bg-white rounded-2xl overflow-hidden shadow-soft transition-all duration-300 hover:shadow-elegant;
+    @apply bg-surface-800/50 rounded-2xl overflow-hidden border border-border-primary shadow-soft transition-all duration-300 hover:shadow-elegant hover:border-border-secondary;
   }
 
   .card-hover {
@@ -96,11 +104,15 @@
   }
 
   .gradient-text {
-    @apply bg-gradient-to-r from-rose-600 via-rose-700 to-gold-600 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-deepblue-400 via-deepblue-500 to-pink-500 bg-clip-text text-transparent;
+  }
+
+  .gradient-text-pink {
+    @apply bg-gradient-to-r from-pink-400 via-pink-500 to-deepblue-500 bg-clip-text text-transparent;
   }
 
   .gradient-border {
-    @apply relative before:absolute before:inset-0 before:rounded-2xl before:opacity-0 before:bg-gradient-to-r before:from-rose-500 before:to-gold-500 before:transition-opacity before:duration-300 hover:before:opacity-100;
+    @apply relative before:absolute before:inset-0 before:rounded-2xl before:opacity-0 before:bg-gradient-to-r before:from-deepblue-500 before:to-pink-500 before:transition-opacity before:duration-300 hover:before:opacity-100;
   }
 
   .blur-preview {
@@ -108,12 +120,24 @@
   }
 
   .blur-preview::after {
-    @apply content-[''] absolute inset-0 bg-gradient-to-t from-white/90 via-white/50 to-transparent pointer-events-none;
+    @apply content-[''] absolute inset-0 bg-gradient-to-t from-background-primary/90 via-background-primary/50 to-transparent pointer-events-none;
   }
 
   .blur-preview img,
   .blur-preview video {
     @apply filter blur-md grayscale-25 transition-all duration-500;
+  }
+
+  .glass {
+    @apply bg-surface-800/30 backdrop-blur-xl border border-border-primary/50;
+  }
+
+  .glow-blue {
+    @apply shadow-glow-blue;
+  }
+
+  .glow-pink {
+    @apply shadow-glow-pink;
   }
 }
 
@@ -129,24 +153,36 @@
   .delay-500 { animation-delay: 500ms; }
 
   .text-shadow {
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   }
 
   .text-shadow-lg {
-    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
   }
 
   .bg-gradient-mesh {
-    background: linear-gradient(135deg, #FFF0F3 0%, #FFF8F0 50%, #FFFEF0 100%);
+    background: linear-gradient(135deg, #0A0F1A 0%, #111827 50%, #0F172A 100%);
+  }
+
+  .bg-gradient-mesh-light {
+    background: linear-gradient(135deg, #EFF6FF 0%, #FDF2F8 50%, #F8FAFC 100%);
   }
 
   .glass {
-    @apply bg-white/80 backdrop-blur-xl border border-white/20;
+    @apply bg-surface-800/30 backdrop-blur-xl border border-border-primary/50;
   }
 
   .gold-shine {
-    background: linear-gradient(90deg, transparent, rgba(247, 197, 72, 0.4), transparent);
+    background: linear-gradient(90deg, transparent, rgba(236, 72, 153, 0.4), transparent);
     background-size: 200% 100%;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-deepblue-400 to-pink-400 bg-clip-text text-transparent;
+  }
+
+  .text-gradient-pink {
+    @apply bg-gradient-to-r from-pink-400 to-deepblue-400 bg-clip-text text-transparent;
   }
 }
 
