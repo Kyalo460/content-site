@@ -13,6 +13,11 @@ interface MediaFormData {
   file: File | null;
 }
 
+interface MediaFormErrors {
+  title?: boolean;
+  file?: boolean;
+}
+
 const collections = [
   { id: 'intimate-moments', name: 'Intimate Moments' },
   { id: 'behind-scenes', name: 'Behind the Scenes' },
@@ -30,10 +35,10 @@ export default function NewMediaPage() {
     collectionId: '',
     file: null,
   });
-  const [errors, setErrors] = useState<Partial<MediaFormData>>({});
+  const [errors, setErrors] = useState<MediaFormErrors>({});
 
   const validateForm = () => {
-    const newErrors: Partial<MediaFormData> = {};
+    const newErrors: MediaFormErrors = {};
     if (!formData.title.trim()) newErrors.title = true;
     if (!formData.file) newErrors.file = true;
     setErrors(newErrors);
