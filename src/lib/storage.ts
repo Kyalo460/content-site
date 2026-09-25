@@ -100,3 +100,18 @@ export function getMediaType(mimeType: string): 'IMAGE' | 'VIDEO' | null {
   if (ALLOWED_MIME_TYPES.video.includes(mimeType as any)) return 'VIDEO';
   return null;
 }
+
+export function getFileExtension(mimeType: string): string {
+  const map: Record<string, string> = {
+    'image/jpeg': 'jpg',
+    'image/png': 'png',
+    'image/webp': 'webp',
+    'image/heic': 'heic',
+    'image/heif': 'heif',
+    'video/mp4': 'mp4',
+    'video/webm': 'webm',
+    'video/quicktime': 'mov',
+    'video/x-msvideo': 'avi',
+  };
+  return map[mimeType] || 'bin';
+}
