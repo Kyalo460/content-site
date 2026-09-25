@@ -1,6 +1,7 @@
 'use client';
 
-import { Menu, Bell, User, Sun, Moon } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Menu, Bell, User, Sun, Moon, LogOut } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
