@@ -118,16 +118,17 @@ export default function NewMediaPage() {
       </div>
 
       <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-soft p-8 space-y-6" noValidate>
-        <div className="border-2 border-dashed rounded-2xl p-8 transition-colors relative"
+        <div
+          className={cn(
+            'border-2 border-dashed rounded-2xl p-8 transition-colors relative cursor-pointer',
+            dragActive && 'border-rose-500 bg-rose-50',
+            !dragActive && 'border-cream-300 hover:border-rose-400'
+          )}
           onDragEnter={handleDrag}
           onDragLeave={handleDrag}
           onDragOver={handleDrag}
           onDrop={handleDrop}
-          className={cn(
-            'cursor-pointer',
-            dragActive && 'border-rose-500 bg-rose-50',
-            !dragActive && 'border-cream-300 hover:border-rose-400'
-          )}>
+        >
           <input
             type="file"
             id="file-upload"
