@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
 interface AdminHeaderProps {
-  user: { name?: string | null; email: string; image?: string | null };
+  user: { name?: string | null; email?: string | null; image?: string | null };
 }
 
 export default function AdminHeader({ user }: AdminHeaderProps) {
@@ -54,7 +54,7 @@ export default function AdminHeader({ user }: AdminHeaderProps) {
               aria-haspopup="true"
             >
               <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-rose-500 to-gold-500 flex items-center justify-center text-white font-medium text-sm">
-                {user.name?.[0]?.toUpperCase() || user.email[0].toUpperCase()}
+                {user.name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || 'A'}
               </div>
               <span className="hidden lg:block text-body-sm font-medium text-charcoal-700">
                 {user.name || 'Admin'}

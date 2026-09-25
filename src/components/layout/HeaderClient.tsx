@@ -7,9 +7,7 @@ import { cn } from '@/lib/utils';
 import WhatsAppButton from './WhatsAppButton';
 
 interface HeaderClientProps {
-  session: {
-    user: { id: string; email: string; name?: string | null; role: string } | null;
-  } | null;
+  session: { id?: string; email?: string; name?: string | null; role?: string; [key: string]: any } | null;
 }
 
 export default function HeaderClient({ session }: HeaderClientProps) {

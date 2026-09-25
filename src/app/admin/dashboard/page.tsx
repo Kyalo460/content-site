@@ -1,14 +1,9 @@
 import { prisma } from '@/lib/prisma';
 import { formatRelativeTime } from '@/lib/utils';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import {
-  Image,
-  Users,
-  TrendingUp,
-  ArrowUpRight,
-  ArrowDownRight,
-} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Image, Users, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import StatCard from '@/components/admin/StatCard';
 
 export default async function AdminDashboardPage() {
   const [
@@ -30,7 +25,7 @@ export default async function AdminDashboardPage() {
       name: 'Media Published',
       value: mediaCount.toString(),
       change: `+${recentMedia.length} recent`,
-      icon: Image,
+      icon: <Image className="w-6 h-6" />,
       color: 'text-rose-600 bg-rose-100',
       trend: 'up' as const,
     },
@@ -38,7 +33,7 @@ export default async function AdminDashboardPage() {
       name: 'Collections',
       value: collectionCount.toString(),
       change: 'Active',
-      icon: Users,
+      icon: <Users className="w-6 h-6" />,
       color: 'text-blue-600 bg-blue-100',
       trend: 'up' as const,
     },
@@ -57,32 +52,7 @@ export default async function AdminDashboardPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 mb-8">
         {stats.map((stat, index) => (
-          <motion.div
-            key={stat.name}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: index * 0.1 }}
-            className="bg-white rounded-2xl p-6 shadow-soft"
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-body-sm text-charcoal-500 mb-1">{stat.name}</p>
-                <p className="font-display text-display-sm text-charcoal-900">{stat.value}</p>
-              </div>
-              <div className={cn('p-3 rounded-xl', stat.color)}>
-                <stat.icon className="w-6 h-6" />
-              </div>
-            </div>
-            <div className="mt-4 flex items-center gap-2">
-              <span className={cn(
-                'text-body-sm font-medium',
-                stat.trend === 'up' ? 'text-green-600' : 'text-rose-600'
-              )}>
-                {stat.trend === 'up' ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
-                {stat.change}
-              </span>
-            </div>
-          </motion.div>
+          <StatCard key={stat.name} stat={stat} index={index} />
         ))}
       </div>
 

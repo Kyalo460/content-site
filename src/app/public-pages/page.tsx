@@ -12,6 +12,7 @@ export default async function HomePage() {
       orderBy: { sortOrder: 'asc' },
       take: 6,
       include: {
+        _count: { select: { media: true } },
         media: {
           where: { isPublished: true },
           take: 1,
@@ -63,7 +64,7 @@ export default async function HomePage() {
                 <CollectionCard
                   key={collection.id}
                   collection={collection}
-                  delay={index * 100}
+                  index={index}
                 />
               ))}
             </div>
