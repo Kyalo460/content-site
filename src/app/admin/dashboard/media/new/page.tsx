@@ -10,8 +10,6 @@ interface MediaFormData {
   title: string;
   description: string;
   collectionId: string;
-  isPremium: boolean;
-  priceCents: number;
   file: File | null;
 }
 
@@ -30,8 +28,6 @@ export default function NewMediaPage() {
     title: '',
     description: '',
     collectionId: '',
-    isPremium: false,
-    priceCents: 0,
     file: null,
   });
   const [errors, setErrors] = useState<Partial<MediaFormData>>({});
@@ -40,7 +36,6 @@ export default function NewMediaPage() {
     const newErrors: Partial<MediaFormData> = {};
     if (!formData.title.trim()) newErrors.title = true;
     if (!formData.file) newErrors.file = true;
-    if (formData.isPremium && formData.priceCents <= 0) newErrors.priceCents = true;
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -84,8 +79,6 @@ export default function NewMediaPage() {
       form.append('title', formData.title);
       form.append('description', formData.description);
       form.append('collectionId', formData.collectionId);
-      form.append('isPremium', formData.isPremium.toString());
-      form.append('priceCents', formData.priceCents.toString());
       if (formData.file) form.append('file', formData.file);
 
       const res = await fetch('/api/media/upload', {
@@ -218,52 +211,6 @@ export default function NewMediaPage() {
               <option key={c.id} value={c.id}>{c.name}</option>
             ))}
           </select>
-        </div>
-
-        <div className="border-t border-cream-200 pt-6">
-          <h3 className="font-display text-heading-md text-charcoal-900 mb-4">Pricing & Access</h3>
-
-          <div className="flex items-center gap-4">
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={formData.isPremium}
-                onChange={(e) => setFormData(prev => ({ ...prev, isPremium: e.target.checked }))}
-                className="w-5 h-5 rounded border-cream-300 text-rose-600 focus:ring-rose-500"
-                disabled={isLoading}
-              />
-              <span className="font-medium text-charcoal-900">Premium Content (Paid Access)</span>
-            </label>
-          </div>
-
-          {formData.isPremium && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="mt-4 overflow-hidden"
-            >
-              <div>
-                <label htmlFor="priceCents" className="label">Price (USD) *</label>
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-charcoal-400">$</span>
-                  <input
-                    type="number"
-                    id="priceCents"
-                    value={formData.priceCents / 100}
-                    onChange={(e) => setFormData(prev => ({ ...prev, priceCents: Math.round(parseFloat(e.target.value || '0') * 100) }))}
-                    className="input pl-8"
-                    placeholder="0.00"
-                    min="0.01"
-                    step="0.01"
-                    required
-                    disabled={isLoading}
-                  />
-                </div>
-                {errors.priceCents && <p className="mt-1 text-body-sm text-rose-600">Price is required for premium content</p>}
-              </div>
-            </motion.div>
-          )}
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 pt-4 border-t border-cream-200">

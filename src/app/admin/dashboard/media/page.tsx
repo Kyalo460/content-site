@@ -11,13 +11,12 @@ import {
   Edit,
   Trash2,
   Eye,
-  Lock,
-  Unlock,
   Globe,
   Globe2,
   Image as ImageIcon,
   Film,
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export default async function AdminMediaPage() {
   const media = await prisma.media.findMany({
@@ -51,7 +50,6 @@ export default async function AdminMediaPage() {
                 <th className="px-6 py-4 text-left text-caption font-medium text-charcoal-500 uppercase tracking-wider">Collection</th>
                 <th className="px-6 py-4 text-left text-caption font-medium text-charcoal-500 uppercase tracking-wider">Type</th>
                 <th className="px-6 py-4 text-left text-caption font-medium text-charcoal-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-4 text-left text-caption font-medium text-charcoal-500 uppercase tracking-wider">Premium</th>
                 <th className="px-6 py-4 text-left text-caption font-medium text-charcoal-500 uppercase tracking-wider">Created</th>
                 <th className="px-6 py-4 text-right text-caption font-medium text-charcoal-500 uppercase tracking-wider">Actions</th>
               </tr>
@@ -59,7 +57,7 @@ export default async function AdminMediaPage() {
             <tbody className="divide-y divide-cream-200">
               {media.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-charcoal-500">
+                  <td colSpan={6} className="px-6 py-12 text-center text-charcoal-500">
                     <div className="flex flex-col items-center gap-4">
                       <ImageIcon className="w-12 h-12 text-cream-300" />
                       <p className="text-body">No media uploaded yet</p>
@@ -115,15 +113,6 @@ export default async function AdminMediaPage() {
                       )}>
                         {item.isPublished ? <Globe className="w-3 h-3" /> : <Globe2 className="w-3 h-3" />}
                         {item.isPublished ? 'Published' : 'Draft'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={cn(
-                        'inline-flex items-center px-2 py-1 rounded-full text-caption font-medium',
-                        item.isPremium ? 'bg-rose-100 text-rose-700' : 'bg-green-100 text-green-700'
-                      )}>
-                        {item.isPremium ? <Lock className="w-3 h-3" /> : <Unlock className="w-3 h-3" />}
-                        {item.isPremium ? 'Premium' : 'Free'}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-body-sm text-charcoal-500">

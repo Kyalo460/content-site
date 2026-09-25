@@ -18,32 +18,12 @@ export async function POST(request: NextRequest) {
       select: {
         id: true,
         fileUrl: true,
-        isPremium: true,
         isPublished: true,
       },
     });
 
     if (!media || !media.isPublished) {
       return NextResponse.json({ message: 'Media not found' }, { status: 404 });
-    }
-
-    if (media.isPremium) {
-      if (!session?.user) {
-        return NextResponse.json({ message: 'Authentication required' }, { status: 401 });
-      }
-
-      const entitlement = await prisma.entitlement.findUnique({
-        where: {
-          customerId_mediaId: {
-            customerId: session.user.id,
-            mediaId: media.id,
-          },
-        },
-      });
-
-      if (!entitlement) {
-        return NextResponse.json({ message: 'Purchase required' }, { status: 403 });
-      }
     }
 
     const signedUrl = await getSignedDownloadUrl(media.fileUrl, 3600);

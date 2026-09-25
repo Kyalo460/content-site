@@ -17,8 +17,6 @@ export async function POST(request: NextRequest) {
     const title = formData.get('title') as string;
     const description = formData.get('description') as string;
     const collectionId = formData.get('collectionId') as string;
-    const isPremium = formData.get('isPremium') === 'true';
-    const priceCents = parseInt(formData.get('priceCents') as string) || 0;
 
     if (!file || !title) {
       return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
@@ -100,8 +98,6 @@ export async function POST(request: NextRequest) {
         thumbnailUrl,
         previewUrl,
         isPublished: false,
-        isPremium,
-        priceCents,
         collectionId: collectionId || null,
       },
     });
@@ -111,7 +107,7 @@ export async function POST(request: NextRequest) {
       action: AuditActions.MEDIA_UPLOAD,
       entity: 'media',
       entityId: media.id,
-      metadata: { title, type: mediaType, isPremium, priceCents },
+      metadata: { title, type: mediaType },
     });
 
     return NextResponse.json({ id: media.id, message: 'Upload successful' });

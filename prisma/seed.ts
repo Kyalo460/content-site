@@ -6,7 +6,6 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Seeding database...');
 
-  // Create admin user
   const adminEmail = process.env.ADMIN_EMAIL || 'admin@shirlene.com';
   const adminPassword = process.env.ADMIN_PASSWORD || 'changeme123!';
   const passwordHash = await bcrypt.hash(adminPassword, 12);
@@ -24,7 +23,6 @@ async function main() {
 
   console.log('✅ Admin user created:', admin.email);
 
-  // Create default site settings
   const settings = await prisma.siteSettings.upsert({
     where: { id: 'singleton' },
     update: {},
@@ -43,7 +41,6 @@ async function main() {
 
   console.log('✅ Site settings created');
 
-  // Create sample collections
   const collections = await Promise.all([
     prisma.collection.upsert({
       where: { slug: 'intimate-moments' },
@@ -81,39 +78,6 @@ async function main() {
   ]);
 
   console.log('✅ Sample collections created');
-
-  // Create sample products
-  const products = await Promise.all([
-    prisma.product.upsert({
-      where: { id: 'single-access' },
-      update: {},
-      create: {
-        id: 'single-access',
-        name: 'Single Media Access',
-        description: 'Purchase access to individual premium content',
-        type: 'SINGLE_ACCESS',
-        priceCents: 999,
-        currency: 'USD',
-        isActive: true,
-      },
-    }),
-    prisma.product.upsert({
-      where: { id: 'monthly-subscription' },
-      update: {},
-      create: {
-        id: 'monthly-subscription',
-        name: 'Monthly Membership',
-        description: 'Access to all premium content for 30 days',
-        type: 'SUBSCRIPTION',
-        priceCents: 2999,
-        currency: 'USD',
-        isActive: true,
-      },
-    }),
-  ]);
-
-  console.log('✅ Sample products created');
-
   console.log('🎉 Seeding complete!');
 }
 

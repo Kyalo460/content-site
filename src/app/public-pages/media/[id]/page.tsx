@@ -2,7 +2,6 @@ import { prisma } from '@/lib/prisma';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import MediaDetail from '@/components/media/MediaDetail';
-import { auth } from '@/lib/auth';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -31,7 +30,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function MediaPage({ params }: Props) {
   const { id } = await params;
-  const session = await auth();
 
   const media = await prisma.media.findUnique({
     where: { id },
@@ -44,28 +42,12 @@ export default async function MediaPage({ params }: Props) {
     notFound();
   }
 
-  let hasAccess = false;
-  if (!media.isPremium) {
-    hasAccess = true;
-  } else if (session?.user?.id) {
-    const entitlement = await prisma.entitlement.findUnique({
-      where: {
-        customerId_mediaId: {
-          customerId: session.user.id,
-          mediaId: media.id,
-        },
-      },
-    });
-    hasAccess = !!entitlement;
-  }
-
   return (
     <MediaDetail
       media={{
         ...media,
         duration: media.duration || undefined,
       }}
-      hasAccess={hasAccess}
       isLoading={false}
     />
   );

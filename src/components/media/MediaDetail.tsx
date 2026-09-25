@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Play, ChevronLeft, ChevronRight, X, Expand, Download, Lock, Heart } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Play, ChevronLeft, ChevronRight, X, Expand, Download, Heart } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface MediaDetailProps {
@@ -19,22 +19,13 @@ interface MediaDetailProps {
     height?: number | null;
     duration?: number | null;
     isPremium: boolean;
-    priceCents: number;
     collection?: { name: string; slug: string } | null;
   };
-  hasAccess: boolean;
   isLoading: boolean;
 }
 
-export default function MediaDetail({ media, hasAccess, isLoading }: MediaDetailProps) {
+export default function MediaDetail({ media, isLoading }: MediaDetailProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [showPurchase, setShowPurchase] = useState(false);
-
-  const handlePurchase = () => {
-    if (media.isPremium && !hasAccess) {
-      setShowPurchase(true);
-    }
-  };
 
   if (isLoading) {
     return (
@@ -50,8 +41,7 @@ export default function MediaDetail({ media, hasAccess, isLoading }: MediaDetail
   }
 
   const isVideo = media.type === 'VIDEO';
-  const contentUrl = hasAccess ? media.fileUrl : (media.previewUrl || media.thumbnailUrl);
-  const isPreview = !hasAccess && media.isPremium;
+  const contentUrl = media.fileUrl;
 
   return (
     <article className="animate-fade-in">
@@ -90,54 +80,20 @@ export default function MediaDetail({ media, hasAccess, isLoading }: MediaDetail
                         poster={media.thumbnailUrl || undefined}
                       />
                     )}
-                    {isPreview && (
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent flex items-center justify-center">
-                        <motion.button
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={handlePurchase}
-                          className="btn-gold text-lg px-8 py-4 group flex items-center gap-3"
-                        >
-                          <Lock className="w-5 h-5" />
-                          <span>Unlock Premium Content</span>
-                          <span className="text-gold-500 font-medium">
-                            ${(media.priceCents / 100).toFixed(2)}
-                          </span>
-                        </motion.button>
-                      </div>
-                    )}
                   </div>
                 ) : (
-                  <>
-                    {contentUrl && (
-                      <Image
-                        src={contentUrl}
-                        alt={media.title}
-                        fill
-                        className={cn('object-cover', isPreview && 'filter blur-md grayscale-25')}
-                        sizes="(max-width: 1024px) 100vw, 50vw"
-                        priority
-                        placeholder="blur"
-                        blurDataURL={media.previewUrl || media.thumbnailUrl || "data:image/webp;base64,UklGRh4AAABXRUJQVlA4TBEAAAAvAQAAAAfQ//73v/+BiOh/AAA="}
-                      />
-                    )}
-                    {isPreview && (
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent flex items-center justify-center">
-                        <motion.button
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={handlePurchase}
-                          className="btn-gold text-lg px-8 py-4 group flex items-center gap-3"
-                        >
-                          <Lock className="w-5 h-5" />
-                          <span>Unlock Premium Content</span>
-                          <span className="text-gold-500 font-medium">
-                            ${(media.priceCents / 100).toFixed(2)}
-                          </span>
-                        </motion.button>
-                      </div>
-                    )}
-                  </>
+                  contentUrl && (
+                    <Image
+                      src={contentUrl}
+                      alt={media.title}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 1024px) 100vw, 50vw"
+                      priority
+                      placeholder="blur"
+                      blurDataURL={media.previewUrl || media.thumbnailUrl || "data:image/webp;base64,UklGRh4AAABXRUJQVlA4TBEAAAAvAQAAAAfQ//73v/+BiOh/AAA="}
+                    />
+                  )
                 )}
 
                 {isFullscreen && (
@@ -190,8 +146,8 @@ export default function MediaDetail({ media, hasAccess, isLoading }: MediaDetail
                   )}>
                     {media.isPremium ? (
                       <>
-                        <Lock className="w-3.5 h-3.5" />
-                        Premium
+                        <Heart className="w-3.5 h-3.5" />
+                        Exclusive
                       </>
                     ) : (
                       <>
@@ -207,54 +163,6 @@ export default function MediaDetail({ media, hasAccess, isLoading }: MediaDetail
                   </span>
                 </div>
 
-                {media.isPremium && !hasAccess && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="bg-gradient-to-r from-rose-50 to-gold-50 rounded-xl p-6 border border-rose-100"
-                  >
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-soft">
-                        <Lock className="w-6 h-6 text-rose-600" />
-                      </div>
-                      <div>
-                        <h3 className="font-display text-heading-sm text-charcoal-900">
-                          Premium Content
-                        </h3>
-                        <p className="text-body-sm text-charcoal-500">
-                          Purchase to unlock full access
-                        </p>
-                      </div>
-                    </div>
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={handlePurchase}
-                      className="btn-gold w-full py-3 text-lg"
-                    >
-                      Purchase for ${(media.priceCents / 100).toFixed(2)}
-                    </motion.button>
-                  </motion.div>
-                )}
-
-                {hasAccess && media.isPremium && (
-                  <div className="bg-green-50 rounded-xl p-6 border border-green-100">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-soft">
-                        <Heart className="w-6 h-6 text-green-600" />
-                      </div>
-                      <div>
-                        <h3 className="font-display text-heading-sm text-charcoal-900">
-                          Access Granted
-                        </h3>
-                        <p className="text-body-sm text-charcoal-500">
-                          Enjoy the full premium experience
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
                 <div className="flex flex-wrap gap-2 pt-4 border-t border-cream-200">
                   <button className="btn-outline text-sm">
                     <Heart className="w-4 h-4" />
@@ -262,7 +170,7 @@ export default function MediaDetail({ media, hasAccess, isLoading }: MediaDetail
                   </button>
                   <button className="btn-outline text-sm">
                     <Download className="w-4 h-4" />
-                    {hasAccess ? 'Download' : 'Preview Only'}
+                    Download
                   </button>
                   <button className="btn-ghost text-sm">
                     Share
@@ -289,74 +197,6 @@ export default function MediaDetail({ media, hasAccess, isLoading }: MediaDetail
           </div>
         </div>
       </section>
-
-      <AnimatePresence>
-        {showPurchase && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-            onClick={() => setShowPurchase(false)}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="purchase-title"
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl"
-              onClick={e => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-between mb-6">
-                <h2 id="purchase-title" className="font-display text-heading-lg text-charcoal-900">
-                  Unlock Premium Content
-                </h2>
-                <button
-                  onClick={() => setShowPurchase(false)}
-                  className="p-2 rounded-xl text-charcoal-400 hover:text-charcoal-600 hover:bg-cream-100 transition-colors"
-                  aria-label="Close"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              <div className="text-center mb-6">
-                <div className="w-16 h-16 bg-rose-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <Lock className="w-8 h-8 text-rose-600" />
-                </div>
-                <h3 className="font-display text-heading-md text-charcoal-900 mb-2">
-                  {media.title}
-                </h3>
-                <p className="text-body text-charcoal-500">
-                  Purchase to unlock full access to this premium content.
-                </p>
-              </div>
-
-              <div className="bg-cream-50 rounded-xl p-4 mb-6">
-                <div className="flex items-center justify-between text-body">
-                  <span className="text-charcoal-600">Premium Access</span>
-                  <span className="font-display text-heading-sm text-charcoal-900 text-rose-600">
-                    ${(media.priceCents / 100).toFixed(2)}
-                  </span>
-                </div>
-              </div>
-
-              <a
-                href={`/checkout/${media.id}`}
-                className="btn-gold w-full py-3 text-lg"
-              >
-                Complete Purchase
-              </a>
-
-              <p className="text-center text-caption text-charcoal-400 mt-4">
-                Secure payment powered by Stripe
-              </p>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </article>
   );
 }
