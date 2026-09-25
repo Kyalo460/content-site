@@ -1,0 +1,255 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  EDITOR
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+}
+
+enum ProductType {
+  SINGLE_ACCESS
+  SUBSCRIPTION
+  BUNDLE
+}
+
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  SUCCEEDED
+  FAILED
+  REFUNDED
+}
+
+model AdminUser {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String
+  name          String?
+  role          Role      @default(ADMIN)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  lastLoginAt   DateTime?
+  loginAttempts Int       @default(0)
+  lockedUntil   DateTime?
+  sessions      Session[]
+
+  @@map("admin_users")
+}
+
+model Session {
+  id           String     @id @default(cuid())
+  userId       String
+  user         AdminUser  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token        String     @unique
+  expiresAt    DateTime
+  createdAt    DateTime   @default(now())
+  ipAddress    String?
+  userAgent    String?
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+model Customer {
+  id                String    @id @default(cuid())
+  email             String    @unique
+  name              String?
+  stripeCustomerId  String?   @unique
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  orders            Order[]
+  entitlements      Entitlement[]
+
+  @@map("customers")
+}
+
+model Collection {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  coverImage  String?
+  sortOrder   Int      @default(0)
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  media       Media[]
+
+  @@index([slug])
+  @@index([isPublished, sortOrder])
+  @@map("collections")
+}
+
+model Media {
+  id              String       @id @default(cuid())
+  collectionId    String?
+  collection      Collection?  @relation(fields: [collectionId], references: [id], onDelete: SetNull)
+  title           String
+  description     String?
+  type            MediaType
+  fileUrl         String
+  fileSize        Int
+  mimeType        String
+  width           Int?
+  height          Int?
+  duration        Float?
+  thumbnailUrl    String?
+  previewUrl      String?
+  isPublished     Boolean      @default(false)
+  isPremium       Boolean      @default(false)
+  priceCents      Int          @default(0)
+  sortOrder       Int          @default(0)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  products        Product[]    @relation("ProductMedia")
+  entitlements    Entitlement[]
+
+  @@index([collectionId])
+  @@index([isPublished, isPremium])
+  @@index([createdAt])
+  @@map("media")
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  type        ProductType
+  priceCents  Int
+  currency    String   @default("USD")
+  isActive    Boolean  @default(true)
+  media       Media[]  @relation("ProductMedia")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  orderItems  OrderItem[]
+
+  @@index([isActive])
+  @@map("products")
+}
+
+model Order {
+  id                    String       @id @default(cuid())
+  customerId            String
+  customer              Customer     @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  stripeSessionId       String?      @unique
+  stripePaymentIntentId String?
+  status                OrderStatus  @default(PENDING)
+  subtotalCents         Int
+  taxCents              Int          @default(0)
+  totalCents            Int
+  currency              String       @default("USD")
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+  items                 OrderItem[]
+  payment               Payment?
+
+  @@index([customerId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("orders")
+}
+
+model OrderItem {
+  id         String  @id @default(cuid())
+  orderId    String
+  order      Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId  String
+  product    Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+  quantity   Int     @default(1)
+  priceCents Int
+
+  @@index([orderId])
+  @@index([productId])
+  @@map("order_items")
+}
+
+model Payment {
+  id                String      @id @default(cuid())
+  orderId           String      @unique
+  order             Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  stripePaymentId   String      @unique
+  amountCents       Int
+  currency          String
+  status            PaymentStatus
+  rawWebhook        Json?
+  createdAt         DateTime    @default(now())
+
+  @@map("payments")
+}
+
+model Entitlement {
+  id          String   @id @default(cuid())
+  customerId  String
+  customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  mediaId     String
+  media       Media    @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  grantedAt   DateTime @default(now())
+  expiresAt   DateTime?
+
+  @@unique([customerId, mediaId])
+  @@index([customerId])
+  @@index([mediaId])
+  @@map("entitlements")
+}
+
+model SiteSettings {
+  id                    String   @id @default("singleton")
+  siteName              String   @default("Shirlene")
+  siteDescription       String?
+  heroTitle             String
+  heroSubtitle          String?
+  heroImage             String?
+  whatsappNumber        String?
+  whatsappMessage       String?
+  contactEmail          String?
+  termsUrl              String?
+  privacyUrl            String?
+  refundUrl             String?
+  ageGateEnabled        Boolean  @default(true)
+  ageGateMessage        String?
+  stripePublishableKey  String?
+  stripeSecretKey       String?
+  stripeWebhookSecret   String?
+  storageProvider       String   @default("s3")
+  storageBucket         String?
+  storageRegion         String?
+  storageAccessKey      String?
+  storageSecretKey      String?
+  updatedAt             DateTime @updatedAt
+
+  @@map("site_settings")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  entity    String
+  entityId  String?
+  metadata  Json?
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([entity, entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}

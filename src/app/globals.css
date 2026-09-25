@@ -1,0 +1,177 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-playfair: 'Playfair Display', Georgia, serif;
+    --font-inter: 'Inter', system-ui, sans-serif;
+  }
+
+  * {
+    @apply border-cream-200;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply font-body text-charcoal-900 bg-cream-50 antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+
+  ::selection {
+    @apply bg-rose-300 text-white;
+  }
+
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-cream-100;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-rose-300 rounded-full hover:bg-rose-400;
+  }
+}
+
+@layer components {
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 font-medium transition-all duration-300 ease-out-expo focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary {
+    @apply btn bg-rose-600 text-white hover:bg-rose-700 focus:ring-rose-500 shadow-elegant;
+  }
+
+  .btn-secondary {
+    @apply btn bg-charcoal-800 text-white hover:bg-charcoal-900 focus:ring-charcoal-500;
+  }
+
+  .btn-gold {
+    @apply btn bg-gold-500 text-charcoal-900 hover:bg-gold-400 focus:ring-gold-500 shadow-gold;
+  }
+
+  .btn-outline {
+    @apply btn border-2 border-charcoal-800 text-charcoal-800 hover:bg-charcoal-800 hover:text-white focus:ring-charcoal-500;
+  }
+
+  .btn-ghost {
+    @apply btn text-charcoal-600 hover:bg-cream-200 focus:ring-charcoal-500;
+  }
+
+  .input {
+    @apply w-full rounded-xl border border-cream-300 bg-white px-4 py-3 text-charcoal-900 placeholder-charcoal-400 transition-all duration-200 focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 focus:outline-none;
+  }
+
+  .label {
+    @apply block text-sm font-medium text-charcoal-700 mb-1.5;
+  }
+
+  .card {
+    @apply bg-white rounded-2xl overflow-hidden shadow-soft transition-all duration-300 hover:shadow-elegant;
+  }
+
+  .card-hover {
+    @apply transform transition-all duration-300 hover:-translate-y-1;
+  }
+
+  .section {
+    @apply py-18 sm:py-22 lg:py-26;
+  }
+
+  .section-sm {
+    @apply py-12 sm:py-16 lg:py-20;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-rose-600 via-rose-700 to-gold-600 bg-clip-text text-transparent;
+  }
+
+  .gradient-border {
+    @apply relative before:absolute before:inset-0 before:rounded-2xl before:opacity-0 before:bg-gradient-to-r before:from-rose-500 before:to-gold-500 before:transition-opacity before:duration-300 hover:before:opacity-100;
+  }
+
+  .blur-preview {
+    @apply relative overflow-hidden;
+  }
+
+  .blur-preview::after {
+    @apply content-[''] absolute inset-0 bg-gradient-to-t from-white/90 via-white/50 to-transparent pointer-events-none;
+  }
+
+  .blur-preview img,
+  .blur-preview video {
+    @apply filter blur-md grayscale-25 transition-all duration-500;
+  }
+}
+
+@layer utilities {
+  .animate-in {
+    animation: fadeInUp 600ms ease-out forwards;
+  }
+
+  .delay-100 { animation-delay: 100ms; }
+  .delay-200 { animation-delay: 200ms; }
+  .delay-300 { animation-delay: 300ms; }
+  .delay-400 { animation-delay: 400ms; }
+  .delay-500 { animation-delay: 500ms; }
+
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .text-shadow-lg {
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .bg-gradient-mesh {
+    background: linear-gradient(135deg, #FFF0F3 0%, #FFF8F0 50%, #FFFEF0 100%);
+  }
+
+  .glass {
+    @apply bg-white/80 backdrop-blur-xl border border-white/20;
+  }
+
+  .gold-shine {
+    background: linear-gradient(90deg, transparent, rgba(247, 197, 72, 0.4), transparent);
+    background-size: 200% 100%;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulseSoft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
